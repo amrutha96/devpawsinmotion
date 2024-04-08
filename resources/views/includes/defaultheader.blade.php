@@ -1,4 +1,4 @@
-<section data-bs-version="5.1" class="menu menu2 cid-tJS6tZXiPa" once="menu" id="menu02-1i">
+<section data-bs-version="5.1" class="menu menu2 cid-tJS6tZXiPa" once="menu" id="menu02-0">
     <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
         <div class="container">
             <div class="navbar-brand">
@@ -54,7 +54,7 @@
                             <li><a class="dropdown-item" href="{{ route('book_appointment') }}">Make
                                     Appointments</a></li>
                             <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">Logout</a>
+								document.getElementById('logout-form').submit();">Logout</a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
                                     @csrf
                                 </form>
@@ -63,6 +63,30 @@
                     @endguest
                 </div>
             </div>
-        </div>
     </nav>
+</section>
+<section data-bs-version="5.1" class="header5 cid-tJS6uM4N87" id="header05-1">
+    <div class="topbg"></div>
+    <div class="align-center container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-9">
+                <h1 class="mbr-section-title mbr-fonts-style mb-4 display-1"><strong>Create amazing websites</strong>
+                </h1>
+                <p class="mbr-text mbr-fonts-style mb-4 display-7">Click any text to edit or style it. Select text to
+                    insert a link.
+                    <br>Click the blue icon at the top right corner (Block Parameters) of the block to hide/show
+                    buttons, text, title, and change the block background. Click the red "+" button at the bottom right
+                    corner to add a new block. Use the top left menu to create new pages, sites, and add new themes and
+                    extensions.</p>
+                <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-7" href="index.html#form02-6">Start
+                        now</a> <a class="btn btn-primary-outline display-7" href="index.html#gallery02-v">Live demo</a>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-12 col-lg-12">
+                <img src="assets/images/mbr-1920x1280.jpg" alt="Mobirise Website Builder" title="">
+            </div>
+        </div>
+    </div>
 </section>
