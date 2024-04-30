@@ -59,7 +59,7 @@ class LoginRegisterController extends Controller
             'address_line1' => $request->address_line1,
             'address_line2' => $request->address_line2,
             'postcode' => $request->postcode,
-            'role_id' => 1,
+            'role_id' => 2,
 
         ]);
 

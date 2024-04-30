@@ -21,19 +21,9 @@ Route::controller(LoginRegisterController::class)->group(function() {
 
 Route::controller(AppointmentsController::class)->group(function(){
     Route::get('/book_appointment', 'book_appointment')->name('book_appointment');
+    Route::post('/create_appointment', 'create_appointment')->name('create_appointment');
+    Route::delete('/book_appointment/{appointment}',  'destroy')->name('appointment.destroy');
+    Route::get('/book_appointment/{appointment}/edit', 'edit')->name('appointment.edit');
+    Route::post('/book_appointment/{appointment}',  'update')->name('appointment.update');
 });
     
-    // Route::get('/', function () {
-    //     return view('\home\homepage');
-    // });
-
-    // Route::get('/login', function () {
-    //     return view('\home\login');
-    // });
-
-    // Route::post('/login', 'App\Http\Controllers\AuthController@login')->name('login');
-
-    // Route::get('/register', 'App\Http\Controllers\OwnersController@index');
-    // Route::post('register', 'App\Http\Controllers\OwnersController@store')->name('owner.register');
-
-

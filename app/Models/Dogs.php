@@ -16,4 +16,9 @@ class Dogs extends Model
         'image',
         'notes'
     ];
+    // Define the inverse relationship if necessary
+    public function appointments()
+    {
+        return $this->hasMany(Appointments::class, 'dog_id','id');
+    }
 }

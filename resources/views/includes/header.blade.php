@@ -4,7 +4,7 @@
             <div class="navbar-brand">
                 <span class="navbar-logo">
                     <a href="/">
-                        <img src="assets/images/sitelogo.webp" alt="Mobirise Website Builder" style="height: 3rem;">
+                        <img src="/assets/images/sitelogo.webp" alt="Mobirise Website Builder" style="height: 3rem;">
                     </a>
                 </span>
                 <span class="navbar-caption-wrap"><a class="navbar-caption text-black text-primary display-4"
