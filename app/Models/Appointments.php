@@ -18,4 +18,8 @@ class Appointments extends Model
         'dog_id',
         'caretaker_id'
     ];
+    public function dogs()
+    {
+        return $this->belongsTo(Dogs::class, 'dog_id','id');
+    }
 }

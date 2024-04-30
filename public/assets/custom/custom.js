@@ -35,5 +35,8 @@ function appendDiv() {
   }
   flatpickr("#datetimepicker", {
     enableTime: true, // Enable time selection
+    altInput: true,
+    minDate: "today",
     dateFormat: "d-m-Y H:i", // Customize the date and time format as needed
+    altFormat: "F j, Y H:i"
 });
