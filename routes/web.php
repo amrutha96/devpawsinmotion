@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\AppointmentsController;
+use App\Admin\Controllers\HomeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,4 +27,6 @@ Route::controller(AppointmentsController::class)->group(function(){
     Route::get('/book_appointment/{appointment}/edit', 'edit')->name('appointment.edit');
     Route::post('/book_appointment/{appointment}',  'update')->name('appointment.update');
 });
-    
+Route::controller(HomeController::class)->group(function(){
+    Route::get('/admin/viewdogs/{id}', 'viewdogs')->name('admin.viewdogs');
+});
