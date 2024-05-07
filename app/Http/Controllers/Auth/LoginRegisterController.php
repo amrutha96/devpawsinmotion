@@ -168,7 +168,6 @@ class LoginRegisterController extends Controller
                     $request['image'] = $request->file('image');
                 }
                 $imageName = time() . '.' . $request['image'][$i]->extension();
-                $request['image'][$i]->storeAs('images/' . $user_id, $imageName);
                 $dogs = Dogs::create([
                     'name' => $request['name'][$i],
                     'height' => $request['height'][$i],
@@ -177,6 +176,10 @@ class LoginRegisterController extends Controller
                     'image' => $imageName,
                     'notes' => $request['textarea'][$i],
                 ]);
+                
+                $request['image'][$i]->move(public_path('images/'.$dogs->id .'/'), $imageName);
+
+                // $request['image'][$i]->storeAs('images/' . $dogs->id, $imageName);
                 $last_inserted_dog_id[] = $dogs->id;
             }
 
