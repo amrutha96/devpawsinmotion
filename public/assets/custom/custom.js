@@ -40,3 +40,4 @@ function appendDiv() {
     dateFormat: "d-m-Y H:i", // Customize the date and time format as needed
     altFormat: "F j, Y H:i"
 });
+

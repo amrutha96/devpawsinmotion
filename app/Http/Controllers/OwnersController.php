@@ -33,30 +33,6 @@ class OwnersController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate([
-        //     'firstname' => 'required',
-        //     'lastname' => 'required',
-        //     'email' => 'required|email|unique:owners',
-        //     'contact' => 'required| phone:GBP',
-        //     'address_line1' => 'required',
-        //     'address_line2' => 'required',
-        //     'postcode' => 'required',
-        //     'password' => 'required|min:6'
-        // ]);
-        // $data['firstname'] = $request->input('firstname');
-        // $data['lastname'] = $request->input('lastname');
-        // $data['email'] = $request->input('email');
-        // $data['contact'] = $request->input('contact');
-        // $data['address_line1'] = $request->input('address_line1');
-        // $data['address_line2'] = $request->input('address_line2');
-        // $data['postcode'] = $request->input('postcode');
-        // $data['password'] = Hash::make($request->input('password')); // Hashing password
-        // dd($data);
-        // Owners::create($data);
-
-        // return redirect("home.register")->withSuccess('You have signed-in');
-
-
         $owners = new Owners;
         $owners->firstname = $request->firstname;
         $owners->lastname  = $request->lastname;

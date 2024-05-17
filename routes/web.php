@@ -18,6 +18,9 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::post('/logout', 'logout')->name('logout');
     Route::get('/register_dogs', 'register_dogs')->name('register_dogs');
     Route::post('/add_dogs', 'add_dogs')->name('add_dogs');
+    Route::get('/register_dogs/{id}/edit_dog', 'editdog')->name('editdog');
+    Route::delete('/register_dogs/{dog_id}',  'deletedog')->name('deletedog');
+    Route::post('/register_dogs/{dog_id}',  'updatedog')->name('updatedog');
 });
 
 Route::controller(AppointmentsController::class)->group(function(){
@@ -29,4 +32,8 @@ Route::controller(AppointmentsController::class)->group(function(){
 });
 Route::controller(HomeController::class)->group(function(){
     Route::get('/admin/viewdogs/{id}', 'viewdogs')->name('admin.viewdogs');
+    Route::post('admin/appointments/assign', 'assign')->name('admin.assign');
+    Route::get('/admin/sendmail/{id}/{appointment_id}', 'sendmail')->name('admin.sendmail');
+    Route::post('admin/appointments/completestatus', 'completestatus')->name('admin.completestatus');
+    Route::post('admin/appointments/sentownermail', 'sentownermail')->name('admin.sentownermail');
 });

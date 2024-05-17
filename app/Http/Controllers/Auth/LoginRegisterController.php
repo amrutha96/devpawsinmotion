@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Dogs;
 use App\Models\User;
+use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -144,7 +145,20 @@ class LoginRegisterController extends Controller
      */
     public function register_dogs()
     {
-        return view('add_dogs');
+        $user_id = Auth::user()->id;
+        $dogs = [];
+        $check_user_dog_ids = User::where('id', '=', $user_id)
+            ->whereNotNull('dog_ids')
+            ->first('dog_ids');
+        if ($check_user_dog_ids) {
+
+            if (json_decode($check_user_dog_ids['dog_ids'])) {
+                $dogs = Dogs::whereIn('id', json_decode($check_user_dog_ids['dog_ids']))->get();
+            }
+        } else {
+            $check_user_dog_ids = [];
+        }
+        return view('add_dogs', ['dogs' => $dogs]);
     }
 
     /**
@@ -176,8 +190,8 @@ class LoginRegisterController extends Controller
                     'image' => $imageName,
                     'notes' => $request['textarea'][$i],
                 ]);
-                
-                $request['image'][$i]->move(public_path('images/'.$dogs->id .'/'), $imageName);
+
+                $request['image'][$i]->move(public_path('images/' . $dogs->id . '/'), $imageName);
 
                 // $request['image'][$i]->storeAs('images/' . $dogs->id, $imageName);
                 $last_inserted_dog_id[] = $dogs->id;
@@ -195,9 +209,79 @@ class LoginRegisterController extends Controller
             }
             User::where('id', $user_id)
                 ->update(['dog_ids' => $current_dog_ids]);
+
+            // $all_appointments = Appointments::with('dogs')->where('user_id', $user_id)->get()->toArray();
             return redirect()->route('register_dogs');
         }
 
+    }
+
+    /**
+     * edit a new dog.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function editdog($id)
+    {
+        $dog = Dogs::find($id);
+        return view('edit_dog', compact('dog'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updatedog(Request $request, $id)
+    {
+        $dog = Dogs::findOrFail($id);
+
+        // Update basic dog details
+        $dog->name = $request->input('name');
+        $dog->height = $request->input('height');
+        $dog->weight = $request->input('weight');
+        $dog->age = $request->input('age');
+        $dog->notes = $request->input('notes');
+
+        if ($request->hasFile('image')) {
+            // Remove existing image if exists
+            if ($dog->image) {
+                $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
+                if (File::exists($existingImagePath)) {
+                    File::delete($existingImagePath);
+                }
+            }
+
+            // Upload new image
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/' . $dog->id), $imageName);
+            $dog->image = $imageName;
+        }
+
+        // Save the updated dog details
+        $dog->save();
+        return redirect()->route('register_dogs')
+            ->with('success', 'Dog details updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deletedog($id)
+    {
+        $dog = Dogs::find($id);
+        if ($dog['image']) {
+            $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
+            if (File::exists($existingImagePath)) {
+                File::delete($existingImagePath);
+            }
+        }
+        $dog->delete();
+        return redirect()->route('register_dogs')
+            ->with('success', 'Dog details deleted successfully');
     }
 
 }

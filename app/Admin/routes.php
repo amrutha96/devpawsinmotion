@@ -13,5 +13,7 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     $router->get('appointments', 'HomeController@appointments')->name('appointments');
+    $router->get('assigned_appointments', 'HomeController@assigned_appointments')->name('assigned_appointments');
+    
 
 });
