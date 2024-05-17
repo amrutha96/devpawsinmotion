@@ -70,17 +70,13 @@
     <div class="align-center container">
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-9">
-                <h1 class="mbr-section-title mbr-fonts-style mb-4 display-1"><strong>Create amazing websites</strong>
-                </h1>
-                <p class="mbr-text mbr-fonts-style mb-4 display-7">Click any text to edit or style it. Select text to
-                    insert a link.
-                    <br>Click the blue icon at the top right corner (Block Parameters) of the block to hide/show
-                    buttons, text, title, and change the block background. Click the red "+" button at the bottom right
-                    corner to add a new block. Use the top left menu to create new pages, sites, and add new themes and
-                    extensions.</p>
-                <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-7" href="index.html#form02-6">Start
-                        now</a> <a class="btn btn-primary-outline display-7" href="index.html#gallery02-v">Live demo</a>
-                </div>
+                <h3 class="mbr-section-title mbr-fonts-style mb-4 display-1"><strong>Step Out Stress-Free: Let Us Walk
+                        Your Pup!</strong>
+                </h3>
+                <p class="mbr-text mbr-fonts-style mb-4 display-7">Explore PawsInMotion, your reliable partner for
+                    professional dog walking services, and learn more about ourselves. Ensuring that each and every walk
+                    is not only safe but also enjoyable and causes the dog's tail to wag!</p>
+
             </div>
         </div>
         <div class="row mt-5 justify-content-center">
