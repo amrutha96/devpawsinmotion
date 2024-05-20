@@ -36,8 +36,8 @@
                                 </select>
                             </div>
                             <div class="col-md col-sm-12 form-group mb-3" data-for="email" id=''>
-                                <input type="text" id="datetimepicker" placeholder="Choose date and time"
-                                    name="datetime" class="form-control" required value="{{date('Y-m-d\TH:i', strtotime($appointment['datetime']))}}">
+                                <input type="text" id="datetimepickeredit" placeholder="Choose date and time"
+                                    name="datetime" class="form-control" required value="{{date('d-m-Y H:I', strtotime($appointment['datetime']))}}">
                             </div>
                             <div class="col-12 form-group mb-3" data-for="textarea">
                                 <textarea name="pickup_address" placeholder="Pick up address" data-form-field="textarea"
