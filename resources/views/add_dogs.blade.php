@@ -47,7 +47,7 @@
                                             class="form-control" value="" id="" required>
                                     </div>
                                     <div class="col-12 form-group mb-3" data-for="textarea">
-                                        <textarea name="textarea[]" placeholder="Please describe your dog"
+                                        <textarea name="textarea[]" placeholder="Please describe your dog including breed"
                                             data-form-field="textarea" class="form-control" id="" required></textarea>
                                     </div>
                                 </div>

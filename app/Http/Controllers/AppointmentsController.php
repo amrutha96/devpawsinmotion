@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointments;
 use App\Models\Dogs;
 use App\Models\User;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use DateTime;
 
 class AppointmentsController extends Controller
 {
@@ -28,7 +29,7 @@ class AppointmentsController extends Controller
             if ($check_user_dog_ids) {
                 $dog_data = $this->getDogArray($check_user_dog_ids);
                 $all_appointments = Appointments::with('dogs')->where('user_id', $user_id)->get()->toArray();
-                return view('book_appointment', ['dogs' => $dog_data,'all_appointments' => $all_appointments]);
+                return view('book_appointment', ['dogs' => $dog_data, 'all_appointments' => $all_appointments]);
             } else {
                 return view('add_dogs');
             }
@@ -38,7 +39,7 @@ class AppointmentsController extends Controller
 
     }
 
-        /**
+    /**
      * Store a new dog.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -47,7 +48,7 @@ class AppointmentsController extends Controller
     public function create_appointment(Request $request)
     {
         if (Auth::check()) {
-            $user_id  = Auth::user()->id;
+            $user_id = Auth::user()->id;
             $appointments = Appointments::create([
                 'datetime' => new DateTime($request['datetime']),
                 'pickup_address' => $request['pickup_address'],
@@ -57,34 +58,10 @@ class AppointmentsController extends Controller
                 'user_id' => $user_id,
             ]);
             return redirect()->route('book_appointment')
-            ->withSuccess('Your appointment has been created');
+                ->withSuccess('Your appointment has been created');
         } else {
             return view('auth.login');
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Appointments $appointments)
-    {
-        //
     }
 
     /**
@@ -94,9 +71,9 @@ class AppointmentsController extends Controller
     {
         $appointment = Appointments::find($id);
         $dog_ids = User::where('id', '=', $appointment['user_id'])
-                ->whereNotNull('dog_ids')->first('dog_ids');
-                $dog_ids = $this->getDogArray($dog_ids);
-        return view('edit_appointment', ['dogs' => $dog_ids,'appointment' => $appointment]);      
+            ->whereNotNull('dog_ids')->first('dog_ids');
+        $dog_ids = $this->getDogArray($dog_ids);
+        return view('edit_appointment', ['dogs' => $dog_ids, 'appointment' => $appointment]);
     }
 
     /**
@@ -105,36 +82,44 @@ class AppointmentsController extends Controller
     public function update(Request $request, $id)
     {
         $update_appointment = Appointments::find($id);
-        $update_appointment->update($request->all());
+        $datetime = Carbon::createFromFormat('d-m-Y H:i', $request->input('datetime'))->format('Y-m-d H:i:s');
+        // Update the appointment with the formatted datetime and other request data
+        $update_appointment->datetime = $datetime;
+        $update_appointment->status = $request->input('status');
+        $update_appointment->pickup_address = $request->input('pickup_address');
+        $update_appointment->postcode = $request->input('postcode');
+        // $update_appointment->update($request->all());
+        $update_appointment->save();
         return redirect()->route('book_appointment')
-        ->with('success', 'Appointment updated successfully.');
+            ->with('success', 'Appointment updated successfully.');
     }
 
-     /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         $appointments = Appointments::find($id);
         $appointments->delete();
         return redirect()->route('book_appointment')
-        ->with('success', 'Appointment deleted successfully');
+            ->with('success', 'Appointment deleted successfully');
     }
 
-    function getDogArray($check_user_dog_ids){
+    public function getDogArray($check_user_dog_ids)
+    {
         $dog_data = [];
-        if($check_user_dog_ids){
-        $user_dog_ids = json_decode($check_user_dog_ids->dog_ids);
-        foreach ($user_dog_ids as $key => $dog_id) {
-            $dog_data[$key] = [
-                'id' => $dog_id,
-                'name' => Dogs::where('id', $dog_id)->pluck('name')->first(),
-            ];
+        if ($check_user_dog_ids) {
+            $user_dog_ids = json_decode($check_user_dog_ids->dog_ids);
+            foreach ($user_dog_ids as $key => $dog_id) {
+                $dog_data[$key] = [
+                    'id' => $dog_id,
+                    'name' => Dogs::where('id', $dog_id)->pluck('name')->first(),
+                ];
+            }
         }
-    }
-    return $dog_data;
+        return $dog_data;
     }
 }

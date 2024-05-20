@@ -145,20 +145,27 @@ class LoginRegisterController extends Controller
      */
     public function register_dogs()
     {
-        $user_id = Auth::user()->id;
-        $dogs = [];
-        $check_user_dog_ids = User::where('id', '=', $user_id)
-            ->whereNotNull('dog_ids')
-            ->first('dog_ids');
-        if ($check_user_dog_ids) {
+        if (Auth::check()) {
+            $user_id = Auth::user()->id;
+            $dogs = [];
+            $check_user_dog_ids = User::where('id', '=', $user_id)
+                ->whereNotNull('dog_ids')
+                ->first('dog_ids');
+            if ($check_user_dog_ids) {
 
-            if (json_decode($check_user_dog_ids['dog_ids'])) {
-                $dogs = Dogs::whereIn('id', json_decode($check_user_dog_ids['dog_ids']))->get();
+                if (json_decode($check_user_dog_ids['dog_ids'])) {
+                    $dogs = Dogs::whereIn('id', json_decode($check_user_dog_ids['dog_ids']))->get();
+                }
+            } else {
+                $check_user_dog_ids = [];
             }
-        } else {
-            $check_user_dog_ids = [];
+            return view('add_dogs', ['dogs' => $dogs]);
         }
-        return view('add_dogs', ['dogs' => $dogs]);
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
+
     }
 
     /**
@@ -213,6 +220,10 @@ class LoginRegisterController extends Controller
             // $all_appointments = Appointments::with('dogs')->where('user_id', $user_id)->get()->toArray();
             return redirect()->route('register_dogs');
         }
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
 
     }
 
@@ -224,8 +235,14 @@ class LoginRegisterController extends Controller
      */
     public function editdog($id)
     {
-        $dog = Dogs::find($id);
-        return view('edit_dog', compact('dog'));
+        if (Auth::check()) {
+            $dog = Dogs::find($id);
+            return view('edit_dog', compact('dog'));
+        }
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
     }
 
     /**
@@ -233,35 +250,41 @@ class LoginRegisterController extends Controller
      */
     public function updatedog(Request $request, $id)
     {
-        $dog = Dogs::findOrFail($id);
+        if (Auth::check()) {
+            $dog = Dogs::findOrFail($id);
 
-        // Update basic dog details
-        $dog->name = $request->input('name');
-        $dog->height = $request->input('height');
-        $dog->weight = $request->input('weight');
-        $dog->age = $request->input('age');
-        $dog->notes = $request->input('notes');
+            // Update basic dog details
+            $dog->name = $request->input('name');
+            $dog->height = $request->input('height');
+            $dog->weight = $request->input('weight');
+            $dog->age = $request->input('age');
+            $dog->notes = $request->input('notes');
 
-        if ($request->hasFile('image')) {
-            // Remove existing image if exists
-            if ($dog->image) {
-                $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
-                if (File::exists($existingImagePath)) {
-                    File::delete($existingImagePath);
+            if ($request->hasFile('image')) {
+                // Remove existing image if exists
+                if ($dog->image) {
+                    $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
+                    if (File::exists($existingImagePath)) {
+                        File::delete($existingImagePath);
+                    }
                 }
+
+                // Upload new image
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images/' . $dog->id), $imageName);
+                $dog->image = $imageName;
             }
 
-            // Upload new image
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/' . $dog->id), $imageName);
-            $dog->image = $imageName;
+            // Save the updated dog details
+            $dog->save();
+            return redirect()->route('register_dogs')
+                ->with('success', 'Dog details updated successfully.');
         }
-
-        // Save the updated dog details
-        $dog->save();
-        return redirect()->route('register_dogs')
-            ->with('success', 'Dog details updated successfully.');
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
     }
 
     /**
@@ -272,16 +295,42 @@ class LoginRegisterController extends Controller
      */
     public function deletedog($id)
     {
-        $dog = Dogs::find($id);
-        if ($dog['image']) {
-            $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
-            if (File::exists($existingImagePath)) {
-                File::delete($existingImagePath);
+        if (Auth::check()) {
+            $dog = Dogs::find($id);
+            if ($dog['image']) {
+                $existingImagePath = public_path('images/' . $dog->id . '/' . $dog->image);
+                if (File::exists($existingImagePath)) {
+                    File::delete($existingImagePath);
+                }
             }
-        }
-        $dog->delete();
-        return redirect()->route('register_dogs')
-            ->with('success', 'Dog details deleted successfully');
-    }
+            $dog->delete();
+            $user_id = Auth::user()->id;
+            $current_dog_ids = User::find($user_id)->dog_ids;
+            if ($current_dog_ids) {
+                $decoded_dog_id = json_decode($current_dog_ids);
+                if (in_array($id, $decoded_dog_id)) {
+                    $updated_dog_ids = array_diff($decoded_dog_id, [$id]); // Note the use of [$id] here
 
+                    // Serialize the array back to JSON (if stored as JSON in the database)
+                    $updated_dog_ids = array_values($updated_dog_ids);
+
+                    // Serialize the array back to JSON (if stored as JSON in the database)
+                    $updated_dog_ids_json = json_encode($updated_dog_ids);
+                    // Update the user's dog_ids column with the updated array
+                    $user = User::find($user_id);
+                    $user->dog_ids = $updated_dog_ids_json;
+                    $user->save();
+                }
+            }
+
+            return redirect()->route('register_dogs')
+                ->with('success', 'Dog details deleted successfully');
+        }
+
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
+
+    }
 }

@@ -40,4 +40,10 @@ function appendDiv() {
     dateFormat: "d-m-Y H:i", // Customize the date and time format as needed
     altFormat: "F j, Y H:i"
 });
+flatpickr("#datetimepickeredit", {
+  enableTime: true, // Enable time selection
+  altInput: true,
+  dateFormat: "d-m-Y H:i", // Customize the date and time format as needed
+  altFormat: "F j, Y H:i"
+});
 
