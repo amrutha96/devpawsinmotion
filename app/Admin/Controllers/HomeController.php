@@ -11,6 +11,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Mail;
 use OpenAdmin\Admin\Admin;
 use OpenAdmin\Admin\Controllers\Dashboard;
 use OpenAdmin\Admin\Layout\Column;
@@ -18,7 +19,7 @@ use OpenAdmin\Admin\Layout\Content;
 use OpenAdmin\Admin\Layout\Row;
 use OpenAdmin\Admin\Show;
 use OpenAdmin\Admin\Widgets\Table;
-use Mail;
+use Redirect;
 
 class HomeController extends Controller
 {
@@ -26,22 +27,25 @@ class HomeController extends Controller
     {
         return $content
             ->css_file(Admin::asset("open-admin/css/pages/dashboard.css"))
-            ->title('Dashboard')
-            ->description('Description...')
-            ->row(Dashboard::title())
+            ->title('PawsInMotion')
+            ->description('Welcome to PawsInMotion Admin')
             ->row(function (Row $row) {
 
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::environment());
+                
+                $row->column(12, function (Column $column) {
+
+                    // Append the rules and policies content
+                    $rulesAndPolicies = view('admin.rules_and_policies')->render();
+                    $column->append($rulesAndPolicies);
                 });
 
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::extensions());
-                });
+                // $row->column(4, function (Column $column) {
+                //     $column->append(Dashboard::extensions());
+                // });
 
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::dependencies());
-                });
+                // $row->column(4, function (Column $column) {
+                //     $column->append(Dashboard::dependencies());
+                // });
             });
     }
     public function appointments(Content $content)
@@ -199,13 +203,14 @@ class HomeController extends Controller
         $ownerId = Appointments::findOrFail($appointment_id)->user_id;
         $ownerDetails = User::findOrFail($ownerId);
         $dog = Dogs::findOrFail($dogId);
-        // Handle file upload
         if ($request->hasFile('media')) {
             $file = $request->file('media');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('media', $fileName); // Adjust storage path as needed
+            $filePath = $file->storeAs('media', $fileName); // Store file in the "media" directory
+            $fullFilePath = storage_path('app/' . $filePath); // Full path to the stored file
         } else {
             $fileName = null;
+            $fullFilePath = null;
         }
         // Compose email content
         $emailContent = [
@@ -220,11 +225,13 @@ class HomeController extends Controller
             'health_observations' => $validatedData['health_observations'] ?? '',
             'hydration' => $validatedData['hydration'] ?? '',
             'general_observations' => $validatedData['general_observations'] ?? '',
-            'mediaPath' => $fileName, // Pass file path to email content
+            'mediaPath' => $fileName, // Pass file name to email content
+            'fullFilePath' => $fullFilePath, // Pass full file path for embedding
         ];
         // Send email
-        Mail::to($ownerDetails->email)->send(new DogWalkReport($emailContent,$fileName));
-        // Redirect back or to a success page
-        return back()->with('success', 'Email sent successfully!');
+        $mailsent = Mail::to($ownerDetails->email)->send(new DogWalkReport($emailContent, $fullFilePath));
+        if ($mailsent) {
+            return Redirect::to('http://127.0.0.1:8000/admin/appointments');
+        }
     }
 }

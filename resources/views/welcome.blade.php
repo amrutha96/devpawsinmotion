@@ -350,7 +350,7 @@
             </div>
         </div>
     </section>
-    <section data-bs-version="5.1" class="contacts2 map1 cid-tLdYHD757A" id="contacts02-9">
+    <section data-bs-version="5.1" class="contacts2 map1 cid-tLdYHD757A" id="contacts02-9" style="background-color: white;">
         <div class="container">
             <div class="mbr-section-head mb-5">
                 <h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
