@@ -44,12 +44,7 @@
     @if($emailContent['mediaPath'])
         <p><strong>Attached Media:</strong></p>
         @if(str_contains($emailContent['mediaPath'], '.jpg') || str_contains($emailContent['mediaPath'], '.png'))
-            <img src="{{ $message->embed(public_path('images/' . $emailContent['mediaPath'])) }}" alt="Attached Image">
-        @elseif(str_contains($emailContent['mediaPath'], '.mp4'))
-            <video width="320" height="240" controls>
-                <source src="{{ $message->embed(public_path('videos/' . $emailContent['mediaPath'])) }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <img src="{{ $message->embed($emailContent['fullFilePath']) }}" alt="Attached Image">
         @endif
         @else 
         <p>no image</p>
