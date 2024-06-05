@@ -82,6 +82,9 @@
                                 <td>{{ $item['pickup_address'] }}</td>
                                 <td>{{ $item['postcode'] }}</td>
                                 <td>{{ $item['status'] }}</td>
+                                @if ($item['status'] == 'completed')
+                                <td>Unable to modify completed appointments</td>
+                                @else
                                 <td> <a href="{{ route('appointment.edit', $item['id']) }}" class="btn btn-primary">Edit</a></td>
                                 <td>
                                     <form action="{{ route('appointment.destroy', $item['id']) }}" method="POST" style="display: inline;">
@@ -92,6 +95,7 @@
                                         </button>
                                     </form>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     @else

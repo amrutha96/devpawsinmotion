@@ -52,7 +52,7 @@ class HomeController extends Controller
     {
         $content->header('All Appointments');
         $caretakers = DB::table('admin_users AS a')
-            ->join('admin_role_permissions AS b', 'a.id', '=', 'b.permission_id')
+            ->join('admin_role_users AS b', 'a.id', '=', 'b.user_id')
             ->join('admin_roles AS c', 'b.role_id', '=', 'c.id')
             ->where('c.slug', '=', 'caretaker')
             ->select('a.id', 'a.name')
@@ -71,12 +71,17 @@ class HomeController extends Controller
         foreach ($appointments as $key => $appointment) {
             $appointment_id = $appointment['id'];
             if (!$isCarer) {
-                $dropdownHtml = '<select class="caretaker_select"> <option value=""> ---Select Caretaker ---</option>';
-                foreach ($caretakers as $caretaker) {
-                    $selected = $appointment['caretaker_id'] == $caretaker->id ? 'selected' : '';
-                    $dropdownHtml .= '<option value="' . $caretaker->id . '" ' . $selected . '>' . $caretaker->name . '</option>';
+                if ($appointment['status'] == 'completed'){
+                    $dropdownHtml = 'This appointment is completed!!';
+                } else {
+                    $dropdownHtml = '<select class="caretaker_select"> <option value=""> ---Select Caretaker ---</option>';
+                    foreach ($caretakers as $caretaker) {
+                        $selected = $appointment['caretaker_id'] == $caretaker->id ? 'selected' : '';
+                        $dropdownHtml .= '<option value="' . $caretaker->id . '" ' . $selected . '>' . $caretaker->name . '</option>';
+                    }
+                    $dropdownHtml .= '</select>';
                 }
-                $dropdownHtml .= '</select>';
+               
             }
             $rows[$key] = [
                 $count,
