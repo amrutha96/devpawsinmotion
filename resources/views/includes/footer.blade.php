@@ -60,7 +60,6 @@
 <script src="/assets/theme/js/script.js"></script>
 <script src="/assets/gallery/player.min.js"></script>
 <script src="/assets/gallery/script.js"></script>
-<script src="/assets/formoid/formoid.min.js"></script>'
+<script src="/assets/formoid/formoid.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <script src="/assets/custom/custom.js"></script>
